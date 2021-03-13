@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 
 public class Overview
 {
@@ -41,10 +41,14 @@ public class Overview
 	public string EVToRevenue { get; set; }
 	public string EVToEBITDA { get; set; }
 	public string Beta { get; set; }
-	public string 52WeekHigh { get; set; }
-	public string 52WeekLow { get; set; }
-	public string 50DayMovingAverage { get; set; }
-	public string 200DayMovingAverage { get; set; }
+	[JsonProperty("52WeekHigh")]
+	public string FiftyTwoWeekHigh { get; set; }
+	[JsonProperty("52WeekLow")]
+	public string FiftyTwoWeekLow { get; set; }
+	[JsonProperty("50DayMovingAverage")]
+	public string FiftyDayMovingAverage { get; set; }
+	[JsonProperty("200DayMovingAverage")]
+	public string TwoHundredDayMovingAverage { get; set; }
 	public string SharesOutstanding { get; set; }
 	public string SharesFloat { get; set; }
 	public string SharesShort { get; set; }
