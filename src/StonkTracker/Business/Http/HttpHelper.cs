@@ -28,5 +28,18 @@ namespace StonkTracker.Business.Http
             }
 
         }
+
+
+        public static async Task<string> GetTimeSeries(string symbol, string interval)
+        {
+            var client = new RestClient(BaseUrl);
+            var request = new RestRequest("query");
+            request.AddParameter("function", "TIME_SERIES_INTRADAY");
+            request.AddParameter("symbol", symbol);
+            request.AddParameter("interval", interval);
+            request.AddParameter("apikey", ApiKey);
+
+            return await client.GetAsync<string>(request);
+        }
     }
 }

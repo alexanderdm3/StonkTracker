@@ -86,6 +86,10 @@ else
             {
 
             }
+
+
+
+        var json = await HttpHelper.GetTimeSeries("dogz", "5min");
         overview = await HttpHelper.GetOverview("dogz");
     }
 }
