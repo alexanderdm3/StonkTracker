@@ -3,6 +3,7 @@
 @using Microsoft.Extensions.Configuration
 @using StonkTracker.Data
 @using StonkTracker.Business.Http
+@using Business.Excel
 @inject WeatherForecastService ForecastService
 @inject IConfiguration Configuration
 
@@ -79,6 +80,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        overview = await HttpHelper.GetOverview("tsla");
+        var models =ExcelReader.ReadSuggestionsInputFile("C:\\Users\\Devin\\Downloads\\SA.xlsx");
+
+        for (int i = 0; i < 3; i++)
+            {
+
+            }
+        overview = await HttpHelper.GetOverview("dogz");
     }
 }

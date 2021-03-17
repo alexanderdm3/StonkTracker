@@ -2,7 +2,7 @@
 
 namespace StonkTracker.Models
 {
-    public class ErningModel
+    public class EarningModel
     {
         public string Symbol { get; set; }
         public IEnumerable<Earnings> AnnualEarnings { get; set; }

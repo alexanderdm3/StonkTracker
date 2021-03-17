@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-public class Overw
+public class Overview
 {
 	public string Symbol { get; set; }
 	public string AssetType { get; set; }
