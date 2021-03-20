@@ -1,23 +1,30 @@
 ﻿using OfficeOpenXml;
 using StonkTracker.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
-
+using MatBlazor;
 
 namespace StonkTracker.Business.Excel
 {
     public static class ExcelReader
     {
-        public static List<SuggestionModel> ReadSuggestionsInputFile(string fileName)
+        public async static Task<List<SuggestionModel>> ReadSuggestionsInputFile(IMatFileUploadEntry entry)
         {
 
             var models = new List<SuggestionModel>();
 
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            FileInfo info = new FileInfo(fileName);
+            //ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            //FileInfo info = new FileInfo(fileName);
 
-            var package = new ExcelPackage(info);
+
+            var stream = new MemoryStream();
+            await entry.WriteToStreamAsync(stream);
+
+
+
+            var package = new ExcelPackage(stream);
             var worksheet = package.Workbook.Worksheets.FirstOrDefault();
 
             for (int i = 1; i < worksheet.Dimension.Rows; i++)

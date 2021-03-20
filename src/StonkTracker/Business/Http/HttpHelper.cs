@@ -1,5 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
+using StonkTracker.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace StonkTracker.Business.Http
@@ -30,7 +36,7 @@ namespace StonkTracker.Business.Http
         }
 
 
-        public static async Task<string> GetTimeSeries(string symbol, string interval)
+        public static async Task<IEnumerable<CompositeTimeSeriesModel>> GetTimeSeries(string symbol, string interval)
         {
             var client = new RestClient(BaseUrl);
             var request = new RestRequest("query");
@@ -39,7 +45,19 @@ namespace StonkTracker.Business.Http
             request.AddParameter("interval", interval);
             request.AddParameter("apikey", ApiKey);
 
-            return await client.GetAsync<string>(request);
+            var json = await client.GetAsync<string>(request);
+            var par = JsonConvert.DeserializeObject(json);
+
+            var jObject = JObject.FromObject(par);
+            var list = jObject["Time Series (5min)"].Value<JObject>();
+
+            var dates = list.Properties().Select(x => x.Name).ToList();
+
+            var compositeModels = new List<CompositeTimeSeriesModel>();
+            foreach (var elem in dates)
+                compositeModels.Add(new CompositeTimeSeriesModel(DateTime.Parse(elem), list[elem].ToObject<TimeSeriesModel>()));
+                
+            return compositeModels;
         }
     }
 }
