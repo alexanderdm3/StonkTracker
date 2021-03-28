@@ -1,4 +1,4 @@
-using MatBlazor;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -7,10 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using StonkTracker.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Blazorise;
+using Blazorise.Bootstrap;
+using Blazorise.Icons.FontAwesome;
 
 namespace StonkTracker
 {
@@ -31,17 +30,14 @@ namespace StonkTracker
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddMatBlazor();
-            services.AddSingleton<WeatherForecastService>();
-            services.AddMatToaster(config =>
+
+            services
+            .AddBlazorise(options =>
             {
-                config.Position = MatToastPosition.BottomRight;
-                config.PreventDuplicates = true;
-                config.NewestOnTop = true;
-                config.ShowCloseButton = true;
-                config.MaximumOpacity = 95;
-                config.VisibleStateDuration = 3000;
-            });
+                options.ChangeTextOnKeyPress = true; // optional
+            })
+            .AddBootstrapProviders()
+            .AddFontAwesomeIcons();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

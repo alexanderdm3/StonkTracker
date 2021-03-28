@@ -56,8 +56,8 @@ namespace StonkTracker.Business.Http
             var compositeModels = new List<CompositeTimeSeriesModel>();
             foreach (var elem in dates)
                 compositeModels.Add(new CompositeTimeSeriesModel(DateTime.Parse(elem), list[elem].ToObject<TimeSeriesModel>()));
-                
-            return compositeModels;
+            compositeModels.OrderBy(x => x.Model.High);
+            return compositeModels; 
         }
     }
 }

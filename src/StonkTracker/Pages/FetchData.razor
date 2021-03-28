@@ -1,137 +1,89 @@
 ﻿@page "/fetchdata"
-
 @using Microsoft.Extensions.Configuration
-@using StonkTracker.Data
-@using StonkTracker.Business.Http
 @using Business.Excel
-@using MatBlazor
-@inject WeatherForecastService ForecastService
+@using StonkTracker.Models
 @inject IConfiguration Configuration
-@inject IMatToaster Toaster
+@inject NavigationManager NavManager
 
-
-<MatToastContainer />
-@if (!list.Any())
+@if (models == null ? true : !models.Any())
 {
-    <MatFileUpload OnChange="@FilesReady" Label="Drop a single file here or Browse"></MatFileUpload>
+    <FileEdit Changed="@OnChanged" Filter=".xlsx" />
 }
 else
 {
-    @*<h1>Symbol: @overview.Symbol</h1>
-        <h6>AssetType: @overview.AssetType</h6>
-        <h6>Name: @overview.Name</h6>
-        <h6>Description: @overview.Description</h6>
-        <h6>Exchange: @overview.Exchange</h6>
-        <h6>Currency: @overview.Currency</h6>
-        <h6>Country: @overview.Country</h6>
-        <h6>Sector: : @overview.Sector</h6>
-        <h6>Industry: @overview.Industry</h6>
-        <h6>Address: @overview.Address</h6>
-        <h6>FullTimeEmployees: @overview.FullTimeEmployees</h6>
-        <h6>FiscalYearEnd: @overview.FiscalYearEnd</h6>
-        <h6>LatestQuarter: @overview.LatestQuarter</h6>
-        <h6>MarketCapitalization: @overview.MarketCapitalization</h6>
-        <h6>EBITDA: @overview.EBITDA</h6>
-        <h6>PERatio: @overview.PERatio</h6>
-        <h6>PEGRatio: @overview.PEGRatio</h6>
-        <h6>BookValue: @overview.BookValue</h6>
-        <h6>DividendPerShare: @overview.DividendPerShare</h6>
-        <h6>DividendYield: @overview.DividendYield</h6>
-        <h6>EPS: @overview.MarketCapitalization</h6>
-        <h6>RevenuePerShareTTM: @overview.RevenuePerShareTTM</h6>
-        <h6>ProfitMargin: @overview.ProfitMargin</h6>
-        <h6>OperatingMarginTTM: @overview.OperatingMarginTTM</h6>
-        <h6>ReturnOnAssetsTTM: @overview.ReturnOnAssetsTTM</h6>
-        <h6>ReturnOnEquityTTM: @overview.ReturnOnEquityTTM</h6>
-        <h6>RevenueTTM: @overview.RevenueTTM</h6>
-        <h6>GrossProfitTTM: @overview.GrossProfitTTM</h6>
-        <h6>DilutedEPSTTM: @overview.DilutedEPSTTM</h6>
-        <h6>QuarterlyEarningsGrowthYOY: @overview.QuarterlyEarningsGrowthYOY</h6>
-        <h6>QuarterlyRevenueGrowthYOY: @overview.QuarterlyRevenueGrowthYOY</h6>
-        <h6>AnalystTargetPrice: @overview.AnalystTargetPrice</h6>
-        <h6>TrailingPE: @overview.TrailingPE</h6>
-        <h6>ForwardPE: @overview.ForwardPE</h6>
-        <h6>PriceToSalesRatioTTM: @overview.PriceToSalesRatioTTM</h6>
-        <h6>PriceToBookRatio: @overview.PriceToBookRatio</h6>
-        <h6>EVToRevenue: @overview.EVToRevenue</h6>
-        <h6>EVToEBITDA: @overview.EVToEBITDA</h6>
-        <h6>Beta: @overview.Beta</h6>
-        <h6>FiftyTwoWeekHigh: @overview.FiftyTwoWeekHigh</h6>
-        <h6>FiftyTwoWeekLow: @overview.FiftyTwoWeekLow</h6>
-        <h6>FiftyDayMovingAverage: @overview.FiftyDayMovingAverage</h6>
-        <h6>TwoHundredDayMovingAverage: @overview.TwoHundredDayMovingAverage</h6>
-        <h6>SharesOutstanding: @overview.SharesOutstanding</h6>
-        <h6>SharesFloat: @overview.SharesFloat</h6>
-        <h6>SharesShort: @overview.SharesShort</h6>
-        <h6>SharesShortPriorMonth: @overview.SharesShortPriorMonth</h6>
-        <h6>ShortRatio: @overview.ShortRatio</h6>
-        <h6>ShortPercentOutstanding: @overview.ShortPercentOutstanding</h6>
-        <h6>ShortPercentFloat: @overview.ShortPercentFloat</h6>
-        <h6>PercentInsiders: @overview.PercentInsiders</h6>
-        <h6>PercentInstitutions: @overview.PercentInstitutions</h6>
-        <h6>ForwardAnnualDividendRate: @overview.ForwardAnnualDividendRate</h6>
-        <h6>ForwardAnnualDividendYield: @overview.ForwardAnnualDividendYield</h6>
-        <h6>PayoutRatio: @overview.PayoutRatio</h6>
-        <h6>DividendDate: @overview.DividendDate</h6>
-        <h6>ExDividendDate: @overview.ExDividendDate</h6>
-        <h6>LastSplitFactor: @overview.LastSplitFactor</h6>
-        <h6>LastSplitDate: @overview.LastSplitDate</h6>*@
+    
+    <Table Hoverable="true">
+        <TableHeader>
+            <TableRow>
+                <TableHeaderCell>#</TableHeaderCell>
+                <TableHeaderCell>Symbol</TableHeaderCell>
+                <TableHeaderCell>Suggestion Time</TableHeaderCell>
+                <TableHeaderCell>Buy At</TableHeaderCell>
+                <TableHeaderCell>Sell At (Initial)</TableHeaderCell>
+                <TableHeaderCell>Sell At (Secondary)</TableHeaderCell>
+            </TableRow>
+        </TableHeader>
+        <TableBody>
+             
+            @{
+                i = 1;
+                foreach (var elem in models)
+                {
+                    var linkstring = $"/overview/{elem.Symbol}";
+                    var val = i;
+                        <TableRow>
+                            <TableRowHeader>@val</TableRowHeader>
+                            <TableRowCell><Button Clicked="@(x => Navigate(elem.Symbol))">@elem.Symbol</Button></TableRowCell>
+                            <TableRowCell>@elem.SuggestionTime.ToString()</TableRowCell>
+                            <TableRowCell>@elem.BuyAt</TableRowCell>
+                            <TableRowCell>@elem.SellAtInitial</TableRowCell>
+                            <TableRowCell>@elem.SellAtSecondary</TableRowCell>
+                        </TableRow>
+                i++;
+                }
+            }
 
-    @foreach (var f in list)
-    {
-        <div>
-            <center><MatButton Raised="true" OnClick="@ReadFile">Use @f</MatButton></center>
-            <br />
-            <center><MatButton Raised="true" OnClick="@ClearList">New File</MatButton></center>
 
-        </div>
-    }
+        </TableBody>
+    </Table>
 
 }
 
 @code {
-
-
-    List<IMatFileUploadEntry> list = new List<IMatFileUploadEntry>();
-
-    void FilesReady(IMatFileUploadEntry[] files)
+    List<SuggestionModel> models = new List<SuggestionModel>();
+    int i = 1;
+    async Task OnChanged(FileChangedEventArgs e)
     {
-        foreach (var file in files)
+        try
         {
-            var extension = file.Name.Split('.').Last();
-            {
-                if (extension == "xlsx")
-                    list.Add(file);
-                else
-                    Toaster.Add("Toast body text", MatToastType.Dark, "Toast title", "code");
-            }
 
+            models = await ExcelReader.ReadSuggestionsInputFile(e.Files);
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine(exc.Message);
+        }
+        finally
+        {
+            this.StateHasChanged();
         }
     }
 
-    void ClearList()
+    void OnWritten(FileWrittenEventArgs e)
     {
-        list = new List<IMatFileUploadEntry>();
+        Console.WriteLine($"File: {e.File.Name} Position: {e.Position} Data: {Convert.ToBase64String(e.Data)}");
+    }
+
+    void OnProgressed(FileProgressedEventArgs e)
+    {
+        Console.WriteLine($"File: {e.File.Name} Progress: {e.Percentage}");
     }
 
 
-
-
-    //private Overview overview;
-
-    //protected override async Task OnInitializedAsync()
-    //{
-
-    //}
-
-    void ReadFile()
+    void Navigate(string content)
     {
-        var models = ExcelReader.ReadSuggestionsInputFile(list[0]);
-
+        string routeString = $"/overview/{content}";
+        NavManager.NavigateTo(routeString);
     }
-    //"C:\\Users\\Devin\\Downloads\\SA.xlsx"
 
-    //    var json = await HttpHelper.GetTimeSeries("dogz", "5min");
-    //    overview = await HttpHelper.GetOverview("dogz");
-    //}
 }
